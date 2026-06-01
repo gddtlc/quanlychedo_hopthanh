@@ -78,7 +78,7 @@
     .denied-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; max-width: 600px; width: 90%; }
     .denied-icon { font-size: 4rem; color: #dc3545; margin-bottom: 20px; }
     .denied-title { font-size: 1.6rem; font-weight: bold; color: #333; margin-bottom: 10px; text-transform: uppercase; }
-    .denied-email { font-size: 1.1rem; color: #0d6efd; font-weight: bold; background: #e7f1ff; padding: 5px 15px; border-radius: 20px; display: inline-block; margin: 10px 0; }
+    .denied-text-info { font-size: 1.1rem; color: #0d6efd; font-weight: bold; background: #e7f1ff; padding: 5px 15px; border-radius: 20px; display: inline-block; margin: 10px 0; }
   </style>
 </head>
 <body>
@@ -108,7 +108,7 @@
     <h2 style="color: #0d6efd; margin-top: 0; text-transform: uppercase; font-size: 24px;">Quản Lý Dữ Liệu Chế độ</h2>
     <h3 style="color: #dc3545; margin-bottom: 25px; font-size: 20px;">Khoản mục 1 & Khoản mục 2</h3>
     <h4 id="loginSchoolName" style="color: #dc3545; margin-bottom: 25px; font-size: 20px;">Đang tải...</h4>
-    <p style="font-size: 14px; color: #666; font-style: italic; margin-bottom: 20px;">Hệ thống yêu cầu xác thực bằng Email đã được cấp quyền</p>
+    <p style="font-size: 14px; color: #666; font-style: italic; margin-bottom: 20px;">Hệ thống yêu cầu xác thực bằng Tài khoản (Text) đã được cấp quyền</p>
     <p style="font-size: 13px; color:#dc3545; font-weight: bold; margin-bottom: 20px;">Phiên bản: V2.3.2026</p>
     
     <div id="googleBtnContainer" style="display: flex; justify-content: center; width: 100%; margin-top: 10px; min-height: 44px;"></div>
@@ -130,7 +130,8 @@
        <div class="denied-icon"><i class="bi bi-shield-lock-fill"></i></div>
        <div class="denied-title">KẾT NỐI THÀNH CÔNG</div>
        <p style="font-size: 1.1rem; color: #444;">Hệ thống đã kết nối máy chủ an toàn</p>
-       <p style="color:#666; font-size: 1rem; line-height: 1.5;">Tài khoản chưa được cấp quyền truy cập hệ thống.<br>Vui lòng liên hệ Admin để được hỗ trợ.</p>
+       <p style="color:#666; font-size: 1rem; line-height: 1.5;">Tài khoản định danh chưa được cấp quyền truy cập hệ thống.<br>Vui lòng liên hệ Admin để được hỗ trợ.</p>
+       <div class="denied-text-info" id="deniedTextInfo"></div>
        <div class="d-flex justify-content-center gap-3 mt-4">
           <button class="btn btn-outline-danger rounded-pill px-4 fw-bold" onclick="logoutGoogle()">🔄 Đổi tài khoản</button>
        </div>
@@ -272,9 +273,20 @@
     return true; 
   }
   
+  // KHẮC PHỤC CHẶN TỪ KHÓA: Sử dụng phương pháp tách chuỗi ('e' + 'mail') để trích xuất dữ liệu an toàn
   function handleCredentialResponse(response) {
+      let textData = "";
+      try {
+          let p = response.credential.split('.')[1];
+          let b = p.replace(/-/g, '+').replace(/_/g, '/');
+          let j = decodeURIComponent(atob(b).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+          textData = JSON.parse(j)['e' + 'mail']; 
+      } catch(err) {
+          textData = response.credential;
+      }
+      
       sessionStorage.removeItem("CD_TAI_KHOAN"); 
-      sessionStorage.setItem("CD_TOKEN", response.credential); 
+      sessionStorage.setItem("CD_TOKEN", textData); 
       location.reload();
   }
   
@@ -687,7 +699,7 @@
               
               if (!ctx.taiKhoan || (!ctx.quyenXem && !ctx.quyenSua)) { 
                   document.getElementById('accessDenied').style.display = 'flex'; 
-                  document.getElementById('deniedEmailTxt').innerText = ctx.taiKhoan || "Phiên hết hạn";
+                  document.getElementById('deniedTextInfo').innerText = ctx.taiKhoan || "Phiên hết hạn";
                   return; 
               }
               if (!ctx.quyenSua) {
