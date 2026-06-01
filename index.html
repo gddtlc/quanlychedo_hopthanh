@@ -106,7 +106,7 @@
   <div class="login-box">
     <img id="loginLogo" src="data:," class="login-logo">
     <h2 style="color: #0d6efd; margin-top: 0; text-transform: uppercase; font-size: 24px;">Quản Lý Dữ Liệu Chế độ</h2>
-    <h3 style="color: #dc3545; margin-bottom: 25px; font-size: 20px;">Khoản mục 1 & Khoản mục 2</h3>
+    <h3 style="color: #dc3545; margin-bottom: 25px; font-size: 20px;">Lương & Thâm niên</h3>
     <h4 id="loginSchoolName" style="color: #dc3545; margin-bottom: 25px; font-size: 20px;">Đang tải...</h4>
     <p style="font-size: 14px; color: #666; font-style: italic; margin-bottom: 20px;">Hệ thống yêu cầu xác thực bằng Tài khoản (Text) đã được cấp quyền</p>
     <p style="font-size: 13px; color:#dc3545; font-weight: bold; margin-bottom: 20px;">Phiên bản: V2.3.2026</p>
@@ -159,7 +159,7 @@
   
   <div class="header">
     <div id="headerSchoolName" style="text-align: left; color:#b91c1c; font-weight:bold; font-size:14px; letter-spacing:1px;">ĐANG TẢI...</div>
-    <h1>QUẢN LÝ DỮ LIỆU CHẾ ĐỘ NHÂN SỰ</h1>
+    <h1>QUẢN LÝ DỮ LIỆU LƯƠNG & THÂM NIÊN</h1>
   </div>
   
   <div class="tabs">
@@ -171,7 +171,7 @@
   </div>
   <div id="tab-search" class="tab-content">
     <div class="control-box">
-      <select id="s_comboLoai" class="form-input" onchange="initSearchTable()"><option value="DM1">Khoản mục 1</option><option value="DM2">Khoản mục 2</option></select>
+      <select id="s_comboLoai" class="form-input" onchange="initSearchTable()"><option value="LUONG">Lương</option><option value="THAMNIEN">Thâm niên</option></select>
       <input type="text" id="s_hoten" class="form-input" placeholder="Tên cán bộ..." autocomplete="off" spellcheck="false" style="width: 160px;" />
       <input type="text" id="s_thang" class="form-input" placeholder="Tháng (1-12)" autocomplete="off" spellcheck="false" style="width: 80px;" oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value > 12) this.value = 12;" maxlength="2" />
       <input type="text" id="s_nam" class="form-input" placeholder="Năm (VD: 2024)" autocomplete="off" spellcheck="false" style="width: 100px;" oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="4" />
@@ -183,7 +183,7 @@
     <div class="control-box" style="justify-content:space-between;">
       <div style="display:flex; gap:10px; align-items:center;">
         <label><b>Chế độ:</b></label>
-        <select id="u_comboLoai" class="form-input" onchange="renderInputTableStructure()"><option value="DM1">Khoản mục 1</option><option value="DM2">Khoản mục 2</option></select>
+        <select id="u_comboLoai" class="form-input" onchange="renderInputTableStructure()"><option value="LUONG">Lương</option><option value="THAMNIEN">Thâm niên</option></select>
       </div>
       <div>
         <button id="btn_addRow" class="btn btn-success" onclick="addRow()">+ Thêm dòng</button>
@@ -210,8 +210,8 @@
     CD_XoaMinhChung: function(link) { this._goiMayChu('CD_XoaMinhChung', [link]); },
     CD_CapNhatHangLoat: function(ds) { this._goiMayChu('CD_CapNhatHangLoat', [ds]); },
     CD_CapNhatMotDong: function(loai, viTri, dl) { this._goiMayChu('CD_CapNhatMotDong', [loai, viTri, dl]); },
-    CD_TraCuuDM1: function(boLoc) { this._goiMayChu('CD_TraCuuDM1', [boLoc]); },
-    CD_TraCuuDM2: function(boLoc) { this._goiMayChu('CD_TraCuuDM2', [boLoc]); },
+    CD_TraCuuLUONG: function(boLoc) { this._goiMayChu('CD_TraCuuLUONG', [boLoc]); },
+    CD_TraCuuTHAMNIEN: function(boLoc) { this._goiMayChu('CD_TraCuuTHAMNIEN', [boLoc]); },
     CD_LayQuyenNguoiDung: function() { this._goiMayChu('CD_LayQuyenNguoiDung', []); },
     CD_KiemTraQuyenDrive: function() { this._goiMayChu('CD_KiemTraQuyenDrive', []); }
   });
@@ -273,7 +273,6 @@
     return true; 
   }
   
-  // KHẮC PHỤC CHẶN TỪ KHÓA: Sử dụng phương pháp tách chuỗi ('e' + 'mail') để trích xuất dữ liệu an toàn
   function handleCredentialResponse(response) {
       let textData = "";
       try {
@@ -308,14 +307,14 @@
   function closeNotify() { document.getElementById('notify_modal').style.display = 'none'; }
   
   const CONFIG = {
-    DM1: [
+    LUONG: [
       { id:'del', name:'Xóa', w:'40px', type:'del' }, { id:'hoten', name:'Họ và tên', w:'160px', align:'left' },
       { id:'mangach', name:'Mã ngạch', w:'70px' }, { id:'bachh', name:'Bậc', w:'50px' }, { id:'hshh', name:'Hệ số', w:'50px' },
       { id:'ngayhh', name:'Ngày Hưởng', w:'100px', type:'date' },
       { id:'bacn', name:'Bậc N', w:'50px' }, { id:'hsn', name:'Hệ số N', w:'50px' }, { id:'ngayn', name:'Ngày Nâng', w:'100px', type:'date' },
       { id:'soqd', name:'Số Quyết định', w:'180px', type:'qd' }, { id:'ngayct', name:'Ngày CT', w:'90px' }
     ],
-    DM2: [
+    THAMNIEN: [
       { id:'del', name:'Xóa', w:'40px', type:'del' }, { id:'hoten', name:'Họ và tên', w:'160px', align:'left' },
       { id:'tlhh', name:'TL% HieH', w:'70px' }, { id:'ngayhh', name:'Ngày Hưởng', w:'100px', type:'date' },
       { id:'tln', name:'TL% Nâng', w:'70px' }, { id:'ngayn', name:'Ngày Nâng', w:'100px', type:'date' },
@@ -389,7 +388,7 @@
     if (window.CD_CAN_EDIT) h += '<th>Sửa</th>'; 
     h += '<th>STT</th>';
     
-    if (loai === 'DM1') { h += `<th class="text-left">Họ tên</th><th>Mã</th><th>Bậc</th><th>Hệ số</th><th>Ngày Hưởng</th><th>Bậc Nâng</th><th>HS Nâng</th><th>Ngày Nâng</th><th>Số Quyết định</th><th>Ngày CT</th></tr>`; } 
+    if (loai === 'LUONG') { h += `<th class="text-left">Họ tên</th><th>Mã</th><th>Bậc</th><th>Hệ số</th><th>Ngày Hưởng</th><th>Bậc Nâng</th><th>HS Nâng</th><th>Ngày Nâng</th><th>Số Quyết định</th><th>Ngày CT</th></tr>`; } 
     else { h += `<th class="text-left">Họ tên</th><th>TL% hiện hưởng</th><th>Ngày Hưởng</th><th>TL% Nâng</th><th>Ngày Nâng</th><th>Số Quyết định</th></tr>`; }
     thead.innerHTML = h; document.getElementById('s_tbody').innerHTML = '<tr><td colspan="15" style="color:#666; padding:15px;">...</td></tr>';
   }
@@ -417,7 +416,7 @@
           
           rows = rows.filter(r => {
               let m2, y2;
-              if (loai === 'DM1') {
+              if (loai === 'LUONG') {
                   m2 = parseInt(r[12], 10); 
                   y2 = parseInt(r[13], 10);
               } else {
@@ -445,7 +444,7 @@
 
       let h = '';
       rows.forEach((r, i) => {
-        const qdObj = loai === 'DM1' ? r[14] : r[11]; 
+        const qdObj = loai === 'LUONG' ? r[14] : r[11]; 
         let linkDisplay = ""; 
         let qdText = "";
         
@@ -479,7 +478,7 @@
         }
 
         h += `<tr>${htmlSua}<td>${i+1}</td>`;
-        if (loai === 'DM1') {
+        if (loai === 'LUONG') {
           h += `<td class="text-left"><b>${r[1]}</b></td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${formatD(r[5],r[6],r[7])}</td>
                 <td>${r[9]}</td><td>${r[10]}</td><td>${formatD(r[11],r[12],r[13])}</td><td>${linkDisplay}</td><td>${r[15] ? formatvnDate(r[15]) : ""}</td></tr>`;
         } else {
@@ -491,7 +490,7 @@
     }).withFailureHandler(loi => { 
         tbody.innerHTML=`<tr><td colspan="15" class="text-error">Lỗi: ${loi.message}</td></tr>`; 
     })
-    [loai === 'DM1' ? 'CD_TraCuuDM1' : 'CD_TraCuuDM2'](boLoc); 
+    [loai === 'LUONG' ? 'CD_TraCuuLUONG' : 'CD_TraCuuTHAMNIEN'](boLoc); 
   }
 
   function transferToEdit(dataEncoded, loai) {
@@ -514,7 +513,7 @@
       
       inputs.forEach(inp => {
           const k = inp.getAttribute('data-key');
-          if (loai === 'DM1') {
+          if (loai === 'LUONG') {
               if(k==='hoten') inp.value = String(r[1] || "").trim(); 
               if(k==='mangach') inp.value = String(r[2] || "").trim(); 
               if(k==='bachh') inp.value = String(r[3] || "").trim();
