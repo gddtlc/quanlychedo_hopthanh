@@ -7,11 +7,10 @@ const HT_DUONG_DAN_API = "https://script.google.com/macros/s/AKfycbzuvwPLKjGmcxq
 // Cấu hình định danh hành chính nhà trường
 const HT_LOGO = "https://i.ibb.co/XkjLVJFt/logo-TH-THCS-v3.png";
 const HT_TEN_TRUONG = "Trường TH&THCS Hợp Thành";
-const HT_TIEU_DE_TRANG = "Quản lý Chế độ Lương & Thâm niên - Trường TH&THCS Hợp Thành";
+const HT_TIEU_DE_TRANG = "Quản lý Lương & Thâm niên - Trường TH&THCS Hợp Thành";
 
 // Cấu hình API Google Login (Xác thực nội bộ)
 const HT_CLIENT_ID = "1097384743947-1jdc5rhhmbu0s9jp5vgt814g4f4id7lu.apps.googleusercontent.com";
-
 
 // Khởi tạo đối tượng truyền dẫn API an toàn
 window.google = window.google || {};
