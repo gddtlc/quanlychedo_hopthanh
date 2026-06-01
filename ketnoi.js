@@ -1,8 +1,8 @@
 // ==========================================
 // CẤU HÌNH GIAO DIỆN & KẾT NỐI API
 // ==========================================
-const HT_DUONG_DAN_API = "https://script.google.com/macros/s/AKfycbzOVyDWdKsn0mG0ba38cpimEaQjkLNG-XlK_pOZ_pvW5gmw1-O9IlErQrJVvSn2bZLi/exec";
-
+// const HT_DUONG_DAN_API = "https://script.google.com/macros/s/AKfycbzOVyDWdKsn0mG0ba38cpimEaQjkLNG-XlK_pOZ_pvW5gmw1-O9IlErQrJVvSn2bZLi/exec";
+const HT_DUONG_DAN_API = "https://script.google.com/macros/s/AKfycbzuvwPLKjGmcxqtwsur2h9GLJMsG0vayOcnTxgeiaZT0shYWhaj6dO__WGmGKV93HE3/exec";
 // Cấu hình định danh nhà trường
 const HT_LOGO = "https://i.ibb.co/XkjLVJFt/logo-TH-THCS-v3.png";
 const HT_TEN_TRUONG = "Trường TH&THCS Hợp Thành";
