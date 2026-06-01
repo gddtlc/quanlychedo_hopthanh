@@ -9,7 +9,7 @@ const HT_TEN_TRUONG = "Trường TH&THCS Hợp Thành";
 const HT_TIEU_DE_TRANG = "Quản lý Lương & Thâm niên - Trường TH&THCS Hợp Thành";
 
 // Cấu hình API Google Login
-const HT_CLIENT_ID = "407480994586-m6fpq6sfcc90qqj9k08rsmi1lge6br94.apps.googleusercontent.com";
+const HT_CLIENT_ID = "1097384743947-1jdc5rhhmbu0s9jp5vgt814g4f4id7lu.apps.googleusercontent.com";
 
 
 // KHẮC PHỤC LỖI TREO MÀN HÌNH: Kế thừa biến google (nếu có) thay vì khai báo mới
