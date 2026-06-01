@@ -105,8 +105,8 @@
 <div id="login-overlay" style="display: none;">
   <div class="login-box">
     <img id="loginLogo" src="data:," class="login-logo">
-    <h2 style="color: #0d6efd; margin-top: 0; text-transform: uppercase; font-size: 24px;">Quản Lý Dữ Liệu Chế độ</h2>
-    <h3 style="color: #dc3545; margin-bottom: 25px; font-size: 20px;">Lương & Thâm niên</h3>
+    <h2 style="color: #0d6efd; margin-top: 0; text-transform: uppercase; font-size: 24px;">Quản Lý Dữ Liệu chế độ</h2>
+    <h3 style="color: #dc3545; margin-bottom: 25px; font-size: 20px;">Lương & Thâm Niên</h3>
     <h4 id="loginSchoolName" style="color: #dc3545; margin-bottom: 25px; font-size: 20px;">Đang tải...</h4>
     <p style="font-size: 14px; color: #666; font-style: italic; margin-bottom: 20px;">Hệ thống yêu cầu xác thực bằng Tài khoản (Text) đã được cấp quyền</p>
     <p style="font-size: 13px; color:#dc3545; font-weight: bold; margin-bottom: 20px;">Phiên bản: V2.3.2026</p>
@@ -171,7 +171,10 @@
   </div>
   <div id="tab-search" class="tab-content">
     <div class="control-box">
-      <select id="s_comboLoai" class="form-input" onchange="initSearchTable()"><option value="LUONG">Lương</option><option value="THAMNIEN">Thâm niên</option></select>
+      <select id="s_comboLoai" class="form-input" onchange="initSearchTable()">
+        <option value="LUONG">Lương</option>
+        <option value="THAMNIEN">Thâm niên</option>
+      </select>
       <input type="text" id="s_hoten" class="form-input" placeholder="Tên cán bộ..." autocomplete="off" spellcheck="false" style="width: 160px;" />
       <input type="text" id="s_thang" class="form-input" placeholder="Tháng (1-12)" autocomplete="off" spellcheck="false" style="width: 80px;" oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value > 12) this.value = 12;" maxlength="2" />
       <input type="text" id="s_nam" class="form-input" placeholder="Năm (VD: 2024)" autocomplete="off" spellcheck="false" style="width: 100px;" oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="4" />
@@ -183,7 +186,10 @@
     <div class="control-box" style="justify-content:space-between;">
       <div style="display:flex; gap:10px; align-items:center;">
         <label><b>Chế độ:</b></label>
-        <select id="u_comboLoai" class="form-input" onchange="renderInputTableStructure()"><option value="LUONG">Lương</option><option value="THAMNIEN">Thâm niên</option></select>
+        <select id="u_comboLoai" class="form-input" onchange="renderInputTableStructure()">
+          <option value="LUONG">Lương</option>
+          <option value="THAMNIEN">Thâm niên</option>
+        </select>
       </div>
       <div>
         <button id="btn_addRow" class="btn btn-success" onclick="addRow()">+ Thêm dòng</button>
@@ -210,8 +216,8 @@
     CD_XoaMinhChung: function(link) { this._goiMayChu('CD_XoaMinhChung', [link]); },
     CD_CapNhatHangLoat: function(ds) { this._goiMayChu('CD_CapNhatHangLoat', [ds]); },
     CD_CapNhatMotDong: function(loai, viTri, dl) { this._goiMayChu('CD_CapNhatMotDong', [loai, viTri, dl]); },
-    CD_TraCuuLUONG: function(boLoc) { this._goiMayChu('CD_TraCuuLUONG', [boLoc]); },
-    CD_TraCuuTHAMNIEN: function(boLoc) { this._goiMayChu('CD_TraCuuTHAMNIEN', [boLoc]); },
+    CD_TraCuuLuong: function(boLoc) { this._goiMayChu('CD_TraCuuLUONG', [boLoc]); },
+    CD_TraCuuThamNien: function(boLoc) { this._goiMayChu('CD_TraCuuTHAMNIEN', [boLoc]); },
     CD_LayQuyenNguoiDung: function() { this._goiMayChu('CD_LayQuyenNguoiDung', []); },
     CD_KiemTraQuyenDrive: function() { this._goiMayChu('CD_KiemTraQuyenDrive', []); }
   });
@@ -490,7 +496,7 @@
     }).withFailureHandler(loi => { 
         tbody.innerHTML=`<tr><td colspan="15" class="text-error">Lỗi: ${loi.message}</td></tr>`; 
     })
-    [loai === 'LUONG' ? 'CD_TraCuuLUONG' : 'CD_TraCuuTHAMNIEN'](boLoc); 
+    [loai === 'LUONG' ? 'CD_TraCuuLuong' : 'CD_TraCuuThamNien'](boLoc); 
   }
 
   function transferToEdit(dataEncoded, loai) {
@@ -678,6 +684,7 @@
           const sInputs = ['s_hoten', 's_thang', 's_nam'];
           sInputs.forEach(id => { const el = document.getElementById(id); if(el) el.addEventListener("keyup", function(e) { if(e.key === 'Enter') doSearch(); }); });
           
+          // Ưu tiên đọc Token bảo mật, nếu không có đọc tạm email cũ để chống gãy hệ thống
           const maXacThuc = sessionStorage.getItem("CD_TOKEN") || sessionStorage.getItem("CD_TAI_KHOAN");
           
           if (!maXacThuc) {
@@ -693,6 +700,7 @@
                 throw new Error("Lỗi nạp thư viện kết nối API. Xin vui lòng Tải lại (Refresh) trang web!");
             }
 
+            // GỌI HÀM KHÔNG CẦN TRUYỀN BIẾN ĐỂ MÁY CHỦ TỰ ĐỘNG BÓC TÁCH AN TOÀN
             window.google.script.run.withSuccessHandler(ctx => {
               document.getElementById('pageLoading').style.display = 'none';
               
