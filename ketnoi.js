@@ -1,18 +1,19 @@
 // ==========================================
-// CẤU HÌNH GIAO DIỆN & KẾT NỐI API
+// CẤU HÌNH GIAO DIỆN & KẾT NỐI API MÁY CHỦ
 // ==========================================
-// const HT_DUONG_DAN_API = "https://script.google.com/macros/s/AKfycbzOVyDWdKsn0mG0ba38cpimEaQjkLNG-XlK_pOZ_pvW5gmw1-O9IlErQrJVvSn2bZLi/exec";
+
 const HT_DUONG_DAN_API = "https://script.google.com/macros/s/AKfycbzuvwPLKjGmcxqtwsur2h9GLJMsG0vayOcnTxgeiaZT0shYWhaj6dO__WGmGKV93HE3/exec";
-// Cấu hình định danh nhà trường
+
+// Cấu hình định danh hành chính nhà trường
 const HT_LOGO = "https://i.ibb.co/XkjLVJFt/logo-TH-THCS-v3.png";
 const HT_TEN_TRUONG = "Trường TH&THCS Hợp Thành";
-const HT_TIEU_DE_TRANG = "Quản lý Lương & Thâm niên - Trường TH&THCS Hợp Thành";
+const HT_TIEU_DE_TRANG = "Quản lý Chế độ Nhân sự - Trường TH&THCS Hợp Thành";
 
-// Cấu hình API Google Login
+// Cấu hình API Google Login (Xác thực nội bộ)
 const HT_CLIENT_ID = "1097384743947-1jdc5rhhmbu0s9jp5vgt814g4f4id7lu.apps.googleusercontent.com";
 
 
-// KHẮC PHỤC LỖI TREO MÀN HÌNH: Kế thừa biến google (nếu có) thay vì khai báo mới
+// Khởi tạo đối tượng truyền dẫn API an toàn
 window.google = window.google || {};
 window.google.script = window.google.script || {};
 
@@ -31,7 +32,6 @@ window.google.script.run = {
   },
   
   _goiMayChu: function(tenGoiHam, cacThamSo) {
-    // KHẮC PHỤC RED FLAG: Gửi nguyên chuỗi Token mã hóa lên máy chủ thay vì email trần
     const maXacThuc = sessionStorage.getItem("CD_TOKEN") || sessionStorage.getItem("CD_TAI_KHOAN") || "";
     const thamSoTruyen = {
       method: 'POST',
@@ -39,14 +39,13 @@ window.google.script.run = {
       body: JSON.stringify({
         tenHam: tenGoiHam,
         thamSo: cacThamSo,
-        token: maXacThuc // Đã thay biến taiKhoan thành biến bảo mật token
+        token: maXacThuc
       })
     };
     
     const thanhCong = this._xuLyThanhCong;
     const thatBai = this._xuLyThatBai;
     
-    // Xóa bộ nhớ đệm để chuẩn bị cho lượt gọi API tiếp theo
     this._xuLyThanhCong = null;
     this._xuLyThatBai = null;
     
