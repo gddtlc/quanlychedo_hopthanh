@@ -359,7 +359,6 @@
     thead.innerHTML = hHtml; tbody.innerHTML = ''; addRow();
   }
 
-  // KHỐI HÀM ĐỒNG BỘ HIỂN THỊ NÚT FILE
   function setRowFileUI(rowCell, isLoaded) {
       const upBtn = rowCell.querySelector('.mini-up-btn');
       const delBtn = rowCell.querySelector('.mini-del-btn');
@@ -488,16 +487,16 @@
             if (linkStr && linkStr.includes(',')) {
                 let links = linkStr.split(',');
                 linkDisplay = `<div style="display:flex; flex-wrap:wrap; gap:3px; justify-content:center;">` + 
-                    links.map((l, idx) => `<a href="${l.trim()}" target="_blank" style="text-decoration:none; background:#e0f2fe; border:1px solid #bae6fd; padding:2px 5px; border-radius:3px; font-size:12px; font-weight:bold; color:#0369a1;" title="Xem QĐ ${idx+1}">QĐ${idx+1}</a>`).join('') + `</div>`;
+                    links.map((l, idx) => `<a href="${l.trim()}" target="_blank" style="text-decoration:none; background:#e0f2fe; border:1px solid #bae6fd; padding:2px 5px; border-radius:3px; font-size:12px; font-weight:bold; color:#0369a1;" title="Xem ${qdText || 'QĐ ' + (idx+1)}">${qdText || 'QĐ'+(idx+1)}</a>`).join('') + `</div>`;
             } else if (linkStr) {
-                linkDisplay = `<a href="${linkStr}" target="_blank" style="text-decoration:none; background:#e0f2fe; border:1px solid #bae6fd; padding:2px 5px; border-radius:3px; font-size:12px; font-weight:bold; color:#0369a1;" title="${qdText}">QĐ 1</a>`;
+                linkDisplay = `<a href="${linkStr}" target="_blank" style="text-decoration:none; background:#e0f2fe; border:1px solid #bae6fd; padding:2px 5px; border-radius:3px; font-size:12px; font-weight:bold; color:#0369a1;" title="${qdText || 'Quyết định'}">${qdText || 'Quyết định'}</a>`;
             } else { linkDisplay = qdText; }
         } else { 
             let str = String(qdObj || "").trim(); 
             if(str.includes('http')) {
                  let links = str.split(',').filter(l => l.includes('http'));
                  linkDisplay = `<div style="display:flex; flex-wrap:wrap; gap:3px; justify-content:center;">` + 
-                    links.map((l, idx) => `<a href="${l.trim()}" target="_blank" style="text-decoration:none; background:#e0f2fe; border:1px solid #bae6fd; padding:2px 5px; border-radius:3px; font-size:12px; font-weight:bold; color:#0369a1;" title="Xem QĐ ${idx+1}">QĐ${idx+1}</a>`).join('') + `</div>`;
+                    links.map((l, idx) => `<a href="${l.trim()}" target="_blank" style="text-decoration:none; background:#e0f2fe; border:1px solid #bae6fd; padding:2px 5px; border-radius:3px; font-size:12px; font-weight:bold; color:#0369a1;" title="Xem ${str || 'QĐ ' + (idx+1)}">${str || 'QĐ'+(idx+1)}</a>`).join('') + `</div>`;
             } else { linkDisplay = str; }
         }
 
@@ -635,12 +634,17 @@
 
   function renderDynamicLinks(rowCell) {
       const linkInput = rowCell.querySelector('input[data-key="soqdLink"]');
+      const textInput = rowCell.querySelector('input[data-key="soqd"]');
       const container = rowCell.querySelector('.dynamic-links');
+      
       if(!container || !linkInput) return;
       container.innerHTML = '';
+      
       const urls = linkInput.value.split(',').map(u => u.trim()).filter(u => u);
+      let displayText = (textInput && textInput.value.trim()) ? textInput.value.trim() : "";
+      
       if(urls.length > 0) {
-          container.innerHTML = urls.map((u, idx) => `<a href="${u}" target="_blank" style="text-decoration:none; background:#e0f2fe; border:1px solid #bae6fd; padding:2px 5px; border-radius:3px; font-size:12px; font-weight:bold; color:#0369a1;" title="Xem QĐ ${idx+1}">QĐ${idx+1}</a>`).join('');
+          container.innerHTML = urls.map((u, idx) => `<a href="${u}" target="_blank" style="text-decoration:none; background:#e0f2fe; border:1px solid #bae6fd; padding:2px 5px; border-radius:3px; font-size:12px; font-weight:bold; color:#0369a1;" title="Xem ${displayText || 'QĐ ' + (idx+1)}">${displayText || 'QĐ' + (idx+1)}</a>`).join('');
       }
   }
 
@@ -694,6 +698,11 @@
               setVal('mangach', res.mangach);
               setVal('bachh', res.bac); 
               setVal('hshh', res.heso); 
+              setVal('soqd', res.soqd); 
+              
+              // Bổ sung nạp dữ liệu Tỷ lệ % cho form Thâm niên
+              setVal('tlhh', res.tlhh); 
+              setVal('tln', res.tln); 
               
               if (res.ngayhuong) {
                   let cd = res.ngayhuong.replace(/[^0-9]/g, '');
@@ -704,6 +713,8 @@
                   }
               }
               showNotify("🤖 AI trích xuất thông tin thành công!", "success");
+              
+              renderDynamicLinks(rowCell);
           } else {
               showNotify("🤖 AI phản hồi: " + res.tbao, "error");
           }
