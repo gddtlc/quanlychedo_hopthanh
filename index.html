@@ -92,9 +92,9 @@
       <div class="mb-3 d-flex justify-content-center">
         <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" width="110">
       </div>
-      <h4 class="fw-bold mb-3" style="font-family: 'Times New Roman', serif; color: #dc2626;" id="trialTitle">Hết hạn dùng thử</h4>
+      <h4 class="fw-bold mb-3" style="font-family: 'Times New Roman', serif; color: #dc2626;" id="trialTitle">Hết hạn thao tác</h4>
       <p class="text-secondary mb-4" style="font-family: 'Times New Roman', serif; font-size: 16px; line-height: 1.5;" id="trialMessage">
-        Thời gian dùng thử 14 ngày của bạn đã kết thúc.<br>Vui lòng liên hệ Admin để gia hạn phần mềm.
+        Thời gian phân quyền của phiên làm việc đã kết thúc.<br>Vui lòng tải lại hệ thống.
       </p>
       <div class="d-flex justify-content-center">
         <button type="button" id="btnTrialOk" class="btn btn-danger fw-bold" style="padding: 8px 30px; font-size: 15px; border-radius: 6px; text-align: center;" data-bs-dismiss="modal">Thoát hệ thống</button>
@@ -106,22 +106,15 @@
 <div id="login-overlay" style="display: none;">
   <div class="login-box">
     <img id="loginLogo" src="data:," class="login-logo">
-    <h2 style="color: #0d6efd; margin-top: 0; text-transform: uppercase; font-size: 24px;">Quản Lý Dữ Liệu chế độ</h2>
+    <h2 style="color: #0d6efd; margin-top: 0; text-transform: uppercase; font-size: 24px;">Phân Hệ Trực Tuyến</h2>
     <h3 style="color: #dc3545; margin-bottom: 25px; font-size: 20px;">Lương & Thâm Niên</h3>
     <h4 id="loginSchoolName" style="color: #dc3545; margin-bottom: 25px; font-size: 20px;">Đang tải...</h4>
-    <p style="font-size: 14px; color: #666; font-style: italic; margin-bottom: 20px;">Hệ thống yêu cầu xác thực bằng Tài khoản (Text) đã được cấp quyền</p>
-    <p style="font-size: 13px; color:#dc3545; font-weight: bold; margin-bottom: 20px;">Phiên bản: V2.3.2026</p>
+    <p style="font-size: 14px; color: #666; font-style: italic; margin-bottom: 20px;">Vui lòng kết nối định danh nội bộ để tiếp tục sử dụng hệ thống.</p>
+    <p style="font-size: 13px; color:#dc3545; font-weight: bold; margin-bottom: 20px;">Phiên bản: V2.6.2026</p>
     
     <div id="googleBtnContainer" style="display: flex; justify-content: center; width: 100%; margin-top: 10px; min-height: 44px;"></div>
     
-    <div style="margin-top: 25px; font-size: 13.5px; color: #15803d; background: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px dashed #bbf7d0; text-align: justify; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
-        <div style="text-align: center; margin-bottom: 8px; font-weight: bold; font-size: 15px;">
-            <span style="font-size: 18px; margin-right: 5px;">🛡️</span><span style="text-transform: uppercase;">Cam kết an toàn bảo mật</span>
-        </div>
-        Hệ thống tuân thủ nghiêm ngặt các quy định an toàn thông tin nội bộ. Việc đăng nhập chỉ dùng để <b>xác thực quyền truy cập</b> của Cán bộ. Ứng dụng cam kết <b>không</b> lưu trữ mật khẩu, <b>không</b> theo dõi và <b>không</b> chia sẻ bất kỳ dữ liệu cá nhân nào ra bên ngoài.
-    </div>
-    
-    <div style="width: 100%; text-align: center; margin-top: 25px; font-size: 12px; color: #999; font-weight: bold;">Thiết kế: Hoàng Ngọc Lâm<br>Phát triển: Hoàng Ngọc Lâm</div>
+    <div style="width: 100%; text-align: center; margin-top: 35px; font-size: 12px; color: #999; font-weight: bold;">Thiết kế và phát triển: Hoàng Ngọc Lâm</div>
   </div>
 </div>
 
@@ -130,11 +123,11 @@
        <img id="deniedLogo" src="data:," style="height: 80px; margin-bottom: 10px;">
        <div class="denied-icon"><i class="bi bi-shield-lock-fill"></i></div>
        <div class="denied-title">KẾT NỐI THÀNH CÔNG</div>
-       <p style="font-size: 1.1rem; color: #444;">Hệ thống đã kết nối máy chủ an toàn</p>
-       <p style="color:#666; font-size: 1rem; line-height: 1.5;">Tài khoản định danh chưa được cấp quyền truy cập hệ thống.<br>Vui lòng liên hệ Admin để được hỗ trợ.</p>
+       <p style="font-size: 1.1rem; color: #444;">Hệ thống đã nhận diện định danh an toàn</p>
+       <p style="color:#666; font-size: 1rem; line-height: 1.5;">Định danh kết nối chưa được phân quyền trên hệ thống.<br>Vui lòng liên hệ Quản trị viên để được hỗ trợ.</p>
        <div class="denied-text-info" id="deniedTextInfo"></div>
        <div class="d-flex justify-content-center gap-3 mt-4">
-          <button class="btn btn-outline-danger rounded-pill px-4 fw-bold" onclick="logoutGoogle()">🔄 Đổi tài khoản</button>
+          <button class="btn btn-outline-danger rounded-pill px-4 fw-bold" onclick="ngatKetNoiHethong()">🔄 Đổi định danh kết nối</button>
        </div>
    </div>
 </div>
@@ -166,8 +159,8 @@
   <div class="tabs">
     <button class="tab-btn active" id="btnTabSearch" onclick="switchTab('search')">TRA CỨU DỮ LIỆU</button>
     <button class="tab-btn" id="btnTabUpdate" onclick="switchTab('update')">CẬP NHẬT CHẾ ĐỘ</button>
-    <button class="tab-btn btn-logout" onclick="logoutGoogle()" title="Đăng xuất tài khoản">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/><path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/></svg> Đăng xuất
+    <button class="tab-btn btn-logout" onclick="ngatKetNoiHethong()" title="Ngắt kết nối hệ thống">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/><path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/></svg> Ngắt kết nối
     </button>
   </div>
   <div id="tab-search" class="tab-content">
@@ -254,24 +247,25 @@
       }).catch(err => { console.error("Lỗi tải cd_minhchung.html:", err); startAppMain(); });
   });
 
-  function hienThiNutDangNhap() {
+  function khoiTaoKetNoiGoogle() {
       if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-          google.accounts.id.initialize({ client_id: (typeof HT_CLIENT_ID !== 'undefined') ? HT_CLIENT_ID : "", callback: handleCredentialResponse, auto_prompt: false });
+          google.accounts.id.initialize({ client_id: (typeof HT_CLIENT_ID !== 'undefined') ? HT_CLIENT_ID : "", callback: xuLyXacNhanHanhChinh, auto_prompt: false });
           google.accounts.id.renderButton(document.getElementById("googleBtnContainer"), { theme: "outline", size: "large", type: "standard", shape: "rectangular", logo_alignment: "left", text: "sign_in_with" });
-      } else { setTimeout(hienThiNutDangNhap, 100); }
+      } else { setTimeout(khoiTaoKetNoiGoogle, 100); }
   }
 
   function checkTrialPeriod() { return true; }
-  function handleCredentialResponse(response) {
+  
+  function xuLyXacNhanHanhChinh(response) {
       let textData = "";
       try {
           let p = response.credential.split('.')[1]; let b = p.replace(/-/g, '+').replace(/_/g, '/');
           let j = decodeURIComponent(atob(b).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')); textData = JSON.parse(j)['e' + 'mail']; 
       } catch(err) { textData = response.credential; }
-      sessionStorage.removeItem("CD_TAI_KHOAN"); sessionStorage.setItem("CD_TOKEN", textData); location.reload();
+      sessionStorage.removeItem("HT_DINH_DANH"); sessionStorage.setItem("HT_PHAN_QUYEN", textData); location.reload();
   }
   
-  function logoutGoogle() { sessionStorage.removeItem("CD_TOKEN"); sessionStorage.removeItem("CD_TAI_KHOAN"); sessionStorage.removeItem("CD_TRIAL_SHOWN"); location.reload(); }
+  function ngatKetNoiHethong() { sessionStorage.removeItem("HT_PHAN_QUYEN"); sessionStorage.removeItem("HT_DINH_DANH"); sessionStorage.removeItem("CD_TRIAL_SHOWN"); location.reload(); }
   
   function showNotify(msg, type='warning') {
       const modal = document.getElementById('notify_modal'); const icon = document.getElementById('notify_icon');
@@ -381,11 +375,10 @@
     tr.innerHTML = html; tbody.appendChild(tr); updateSTT();
   }
 
-  // KHÓA XÓA DÒNG KHI ĐANG SỬA ĐỂ BẢO VỆ DỮ LIỆU
   function removeRow(btn) { 
       const editRowIndex = document.getElementById('EDIT_ROW_INDEX').value;
       if (editRowIndex) {
-          showNotify("Đang ở chế độ Sửa. Hãy bấm nút [❌ Xóa] ở cột Quyết định để xóa hoàn toàn hồ sơ này khỏi hệ thống!", "warning");
+          showNotify("Đang ở chế độ Cập nhật dữ liệu. Hãy bấm nút [❌ Xóa] ở cột Quyết định để hủy hoàn toàn hồ sơ này khỏi hệ thống!", "warning");
           return;
       }
       const tbody = document.getElementById('u_tbody'); 
@@ -551,7 +544,11 @@
       const originalText = btn.innerText; btn.innerText = "⏳ Đang quét..."; btn.style.pointerEvents = "none"; btn.style.opacity = "0.7";
       
       window.google.script.run.withSuccessHandler(res => {
-          btn.innerText = originalText; btn.style.pointerEvents = "auto"; btn.style.opacity = "1";
+          btn.innerText = "✅ Trích xuất xong";
+          btn.style.background = "#4ade80";
+          btn.style.color = "#064e3b";
+          btn.style.borderColor = "#22c55e";
+          
           if(res.tcon) {
               const loai = document.getElementById('u_comboLoai').value;
               const setVal = (key, val) => { const inp = rowTr.querySelector(`input[data-key="${key}"]`); if (inp && val && val.trim() !== "") inp.value = val.trim(); };
@@ -577,10 +574,23 @@
               CD_tinhTudongLuong(rowTr);
               showNotify("🤖 AI trích xuất thông tin thành công!", "success"); renderDynamicLinks(rowCell);
           } else { showNotify("🤖 AI phản hồi: " + res.tbao, "error"); }
-      }).withFailureHandler(err => { btn.innerText = originalText; btn.style.pointerEvents = "auto"; btn.style.opacity = "1"; showNotify("❌ Lỗi kết nối AI: " + err.message, "error"); }).CD_DocQuyetDinhAI(url);
+          
+          setTimeout(() => { 
+             btn.innerText = originalText;
+             btn.style.pointerEvents = "auto";
+             btn.style.opacity = "1";
+             btn.style.background = "#fef08a";
+             btn.style.color = "#854d0e";
+             btn.style.borderColor = "#fde047";
+          }, 3000);
+      }).withFailureHandler(err => {
+          btn.innerText = originalText;
+          btn.style.pointerEvents = "auto";
+          btn.style.opacity = "1";
+          showNotify("❌ Lỗi kết nối AI: " + err.message, "error");
+      }).CD_DocQuyetDinhAI(url);
   }
 
-  // TÍCH HỢP XÓA BẢN GHI TẬN GỐC TỪ NÚT XÓA Ở CỘT QUYẾT ĐỊNH
   function deleteFileInRow(btn) {
       if(!confirm("CẢNH BÁO MẤT DỮ LIỆU: Thao tác này sẽ xóa vĩnh viễn File trên Drive VÀ TOÀN BỘ HỒ SƠ của Cán bộ này trong bảng tính. Bạn có chắc chắn muốn xóa?")) return;
       const rowCell = btn.closest('td'); const rowTr = btn.closest('tr');
@@ -591,7 +601,6 @@
 
       btn.innerText = "⏳";
       if (editRowIndex) {
-          // XÓA HỒ SƠ TRÊN CƠ SỞ DỮ LIỆU
           window.google.script.run.withSuccessHandler(res => {
               if(res.thanhCong) {
                   showNotify(res.thongBao, "success");
@@ -605,7 +614,6 @@
               btn.innerText = "❌"; showNotify("Lỗi máy chủ: " + err.message, "error");
           }).CD_XoaBanGhi(loai, editRowIndex, url);
       } else {
-          // CHỈ XÓA FILE TRÊN DRIVE (Do dòng này chưa từng được lưu vào máy chủ)
           if(!url) { 
               if (document.getElementById('u_tbody').rows.length > 1) { rowTr.remove(); updateSTT(); } else resetRowFileUI(rowCell); 
               return; 
@@ -629,8 +637,8 @@
       try {
           initSearchTable(); const sInputs = ['s_hoten', 's_thang', 's_nam'];
           sInputs.forEach(id => { const el = document.getElementById(id); if(el) el.addEventListener("keyup", function(e) { if(e.key === 'Enter') doSearch(); }); });
-          const maXacThuc = sessionStorage.getItem("CD_TOKEN") || sessionStorage.getItem("CD_TAI_KHOAN");
-          if (!maXacThuc) { document.getElementById('login-overlay').style.display = 'flex'; document.getElementById('pageLoading').style.display = 'none'; hienThiNutDangNhap(); } else {
+          const maXacThuc = sessionStorage.getItem("HT_PHAN_QUYEN") || sessionStorage.getItem("HT_DINH_DANH");
+          if (!maXacThuc) { document.getElementById('login-overlay').style.display = 'flex'; document.getElementById('pageLoading').style.display = 'none'; khoiTaoKetNoiGoogle(); } else {
             document.getElementById('login-overlay').style.display = 'none'; document.getElementById('pageLoading').style.display = 'flex'; document.getElementById('loading-msg').innerText = "Đang kiểm tra phân quyền...";
             window.google.script.run.withSuccessHandler(ctx => {
               document.getElementById('pageLoading').style.display = 'none';
@@ -638,7 +646,7 @@
               if (!ctx.quyenSua) { const btnUp = document.getElementById('btnTabUpdate'); if(btnUp) btnUp.remove(); const divUp = document.getElementById('tab-update'); if(divUp) divUp.remove(); }
               window.CD_CAN_EDIT = ctx.quyenSua; initSearchTable(); document.getElementById('mainApp').style.opacity = '1'; checkTrialPeriod();
               if (ctx.quyenSua) { window.google.script.run.withSuccessHandler(ok => { if(!ok) console.log("Drive Access Needed"); }).CD_KiemTraQuyenDrive(); }
-            }).withFailureHandler(err => { document.getElementById('pageLoading').style.display = 'none'; showNotify("Lỗi máy chủ API: " + err.message, "error"); }).CD_LayQuyenNguoiDung();
+            }).withFailureHandler(err => { document.getElementById('pageLoading').style.display = 'none'; showNotify("Lỗi máy chủ API: " + err.message, "error"); }).CD_LayQuyenNguoiDung(maXacThuc);
           }
       } catch (e) { document.getElementById('pageLoading').style.display = 'none'; showNotify("Hệ thống gián đoạn: " + e.message, "error"); }
   }
