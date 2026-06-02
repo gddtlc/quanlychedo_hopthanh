@@ -217,6 +217,7 @@
     CD_XoaMinhChung: function(link) { this._goiMayChu('CD_XoaMinhChung', [link]); },
     CD_CapNhatHangLoat: function(ds) { this._goiMayChu('CD_CapNhatHangLoat', [ds]); },
     CD_CapNhatMotDong: function(loai, viTri, dl) { this._goiMayChu('CD_CapNhatMotDong', [loai, viTri, dl]); },
+    CD_XoaBanGhi: function(loai, viTri, link) { this._goiMayChu('CD_XoaBanGhi', [loai, viTri, link]); },
     CD_TraCuuLuong: function(boLoc) { this._goiMayChu('CD_TraCuuLUONG', [boLoc]); },
     CD_TraCuuThamNien: function(boLoc) { this._goiMayChu('CD_TraCuuTHAMNIEN', [boLoc]); },
     CD_LayQuyenNguoiDung: function() { this._goiMayChu('CD_LayQuyenNguoiDung', []); },
@@ -368,7 +369,7 @@
                 <div style="display:flex; gap:4px; align-items:center; justify-content:center; flex-wrap:wrap;">
                     <span class="mini-btn mini-up-btn" onclick="triggerUpload(this)" title="Đính kèm Quyết định" style="padding: 4px 10px;">📁 Đính kèm</span>
                     <span class="mini-btn mini-ai-btn" onclick="triggerAIScan(this)" title="AI trích xuất tự động" style="padding: 4px 10px;">🤖 Quét AI</span>
-                    <span class="mini-btn mini-del-btn" onclick="deleteFileInRow(this)" title="Xóa file" style="padding: 4px 10px;">❌ Xóa</span>
+                    <span class="mini-btn mini-del-btn" onclick="deleteFileInRow(this)" title="Xóa file và bản ghi" style="padding: 4px 10px;">❌ Xóa</span>
                     <input type="hidden" data-key="${c.id}"> <input type="hidden" data-key="${c.id}Link"> <input type="hidden" data-key="${c.id}Text">
                 </div>
                 <div class="dynamic-links" style="display:flex; flex-wrap:wrap; gap:3px; justify-content:center;"></div>
@@ -380,17 +381,17 @@
     tr.innerHTML = html; tbody.appendChild(tr); updateSTT();
   }
 
-  // KHÓA XÓA DÒNG KHI ĐANG SỬA
+  // KHÓA XÓA DÒNG KHI ĐANG SỬA ĐỂ BẢO VỆ DỮ LIỆU
   function removeRow(btn) { 
       const editRowIndex = document.getElementById('EDIT_ROW_INDEX').value;
       if (editRowIndex) {
-          showNotify("Đang ở chế độ Sửa dữ liệu, không thể xóa dòng này!", "warning");
+          showNotify("Đang ở chế độ Sửa. Hãy bấm nút [❌ Xóa] ở cột Quyết định để xóa hoàn toàn hồ sơ này khỏi hệ thống!", "warning");
           return;
       }
       const tbody = document.getElementById('u_tbody'); 
       if (tbody.rows.length > 1) { btn.closest('tr').remove(); updateSTT(); } else showNotify("Cần giữ lại ít nhất 1 dòng để nhập liệu."); 
   }
-  
+
   function updateSTT() { document.querySelectorAll('.stt-cell').forEach((td, i) => td.innerText = i + 1); }
 
   function initSearchTable() {
@@ -579,12 +580,44 @@
       }).withFailureHandler(err => { btn.innerText = originalText; btn.style.pointerEvents = "auto"; btn.style.opacity = "1"; showNotify("❌ Lỗi kết nối AI: " + err.message, "error"); }).CD_DocQuyetDinhAI(url);
   }
 
+  // TÍCH HỢP XÓA BẢN GHI TẬN GỐC TỪ NÚT XÓA Ở CỘT QUYẾT ĐỊNH
   function deleteFileInRow(btn) {
-      if(!confirm("Bạn có chắc chắn muốn xóa file đính kèm này trên Drive không?")) return;
-      const rowCell = btn.closest('td'); const linkInput = rowCell.querySelector('input[data-key="soqdLink"]'); const url = linkInput ? linkInput.value : "";
-      if(!url) { resetRowFileUI(rowCell); return; }
+      if(!confirm("CẢNH BÁO MẤT DỮ LIỆU: Thao tác này sẽ xóa vĩnh viễn File trên Drive VÀ TOÀN BỘ HỒ SƠ của Cán bộ này trong bảng tính. Bạn có chắc chắn muốn xóa?")) return;
+      const rowCell = btn.closest('td'); const rowTr = btn.closest('tr');
+      const linkInput = rowCell.querySelector('input[data-key="soqdLink"]'); const url = linkInput ? linkInput.value : "";
+      
+      const editRowIndex = document.getElementById('EDIT_ROW_INDEX').value;
+      const loai = document.getElementById('u_comboLoai').value;
+
       btn.innerText = "⏳";
-      window.google.script.run.withSuccessHandler(res => { if(res.thanhCong) { resetRowFileUI(rowCell); showNotify("Đã xóa file vĩnh viễn trên Drive!", "success"); } else { btn.innerText = "❌"; showNotify("Lỗi: " + res.thongBao, "error"); } }).CD_XoaMinhChung(url);
+      if (editRowIndex) {
+          // XÓA HỒ SƠ TRÊN CƠ SỞ DỮ LIỆU
+          window.google.script.run.withSuccessHandler(res => {
+              if(res.thanhCong) {
+                  showNotify(res.thongBao, "success");
+                  document.getElementById('EDIT_ROW_INDEX').value = "";
+                  document.getElementById('btn_addRow').style.display = 'inline-flex';
+                  renderInputTableStructure();
+              } else {
+                  btn.innerText = "❌"; showNotify("Lỗi: " + res.thongBao, "error");
+              }
+          }).withFailureHandler(err => {
+              btn.innerText = "❌"; showNotify("Lỗi máy chủ: " + err.message, "error");
+          }).CD_XoaBanGhi(loai, editRowIndex, url);
+      } else {
+          // CHỈ XÓA FILE TRÊN DRIVE (Do dòng này chưa từng được lưu vào máy chủ)
+          if(!url) { 
+              if (document.getElementById('u_tbody').rows.length > 1) { rowTr.remove(); updateSTT(); } else resetRowFileUI(rowCell); 
+              return; 
+          }
+          window.google.script.run.withSuccessHandler(res => { 
+              if(res.thanhCong) { 
+                  showNotify("Đã xóa file vĩnh viễn trên Drive!", "success"); 
+                  if (document.getElementById('u_tbody').rows.length > 1) { rowTr.remove(); updateSTT(); } else resetRowFileUI(rowCell);
+              } 
+              else { btn.innerText = "❌"; showNotify("Lỗi: " + res.thongBao, "error"); } 
+          }).CD_XoaMinhChung(url);
+      }
   }
 
   function resetRowFileUI(rowCell) {
