@@ -337,16 +337,18 @@
     else input.value = v;
 
     // THUẬT TOÁN TỰ ĐỘNG CỘNG 3 NĂM CHO LƯƠNG 
-    if (input.value.length === 10 && input.getAttribute('data-key') === 'ngayhh') {
+    if (input.getAttribute('data-key') === 'ngayhh') {
         const loai = document.getElementById('u_comboLoai')?.value;
         if (loai === 'LUONG') {
             const row = input.closest('tr');
             const inpNgayN = row?.querySelector('input[data-key="ngayn"]');
             if (inpNgayN) { 
                 let parts = input.value.split('/');
-                let y = parseInt(parts[2], 10);
-                if (!isNaN(y)) {
-                    inpNgayN.value = parts[0] + '/' + parts[1] + '/' + (y + 3);
+                if (parts.length === 3 && parts[2].length === 4) {
+                    let y = parseInt(parts[2], 10);
+                    if (!isNaN(y)) {
+                        inpNgayN.value = parts[0] + '/' + parts[1] + '/' + (y + 3);
+                    }
                 }
             }
         }
@@ -573,7 +575,7 @@
           } else {
               if(k==='hoten') inp.value = String(r[1] || "").trim(); 
               
-              // SỬA LỖI ĐỊNH DẠNG % KHI CHUYỂN SANG TAB SỬA
+              // GIỮ NGUYÊN ĐỊNH DẠNG % KHI CHUYỂN SANG TAB SỬA
               if(k==='tlhh') inp.value = formatPercent(r[2]); 
               if(k==='tln') inp.value = formatPercent(r[7]); 
               
@@ -740,7 +742,7 @@
                   } else {
                       setVal('ngayhh', res.ngayhuong);
                   }
-              } else if (loai === 'THAMNIEN' && finalNgayNang && finalNgayNang.length === 10) {
+              } else if (loai === 'THAMNIEN' && finalNgayNang && finalNgayNang.length >= 8) {
                   let parts = finalNgayNang.split('/');
                   if (parts.length === 3) {
                       let y = parseInt(parts[2], 10);
@@ -753,9 +755,9 @@
               // KÍCH HOẠT THUẬT TOÁN: CỘNG 3 NĂM CHO LƯƠNG TRÊN AI
               if (loai === 'LUONG') {
                   let valNgayHh = rowTr.querySelector(`input[data-key="ngayhh"]`)?.value;
-                  if (valNgayHh && valNgayHh.length === 10) {
+                  if (valNgayHh) {
                       let parts = valNgayHh.split('/');
-                      if (parts.length === 3) {
+                      if (parts.length === 3 && parts[2].length === 4) {
                           let y = parseInt(parts[2], 10);
                           if (!isNaN(y)) {
                               setVal('ngayn', parts[0] + '/' + parts[1] + '/' + (y + 3));
