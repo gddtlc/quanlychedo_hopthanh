@@ -689,6 +689,7 @@
           btn.style.borderColor = "#22c55e";
           
           if(res.tcon) {
+              const loai = document.getElementById('u_comboLoai').value;
               const setVal = (key, val) => {
                   const inp = rowTr.querySelector(`input[data-key="${key}"]`);
                   if (inp && val && val.trim() !== "") inp.value = val.trim();
@@ -699,21 +700,41 @@
               setVal('bachh', res.bac); 
               setVal('hshh', res.heso); 
               setVal('soqd', res.soqd); 
-              
-              // Bổ sung nạp dữ liệu Tỷ lệ % cho form Thâm niên
               setVal('tlhh', res.tlhh); 
               setVal('tln', res.tln); 
               
+              // Xử lý chuẩn hóa Ngày Nâng (Mới)
+              let finalNgayNang = "";
+              if (res.ngaynang) {
+                  let cdNang = res.ngaynang.replace(/[^0-9]/g, '');
+                  if (cdNang.length >= 8) {
+                      finalNgayNang = cdNang.substring(0, 2) + '/' + cdNang.substring(2, 4) + '/' + cdNang.substring(4,8);
+                  } else {
+                      finalNgayNang = res.ngaynang;
+                  }
+                  setVal('ngayn', finalNgayNang);
+              }
+              
+              // Xử lý chuẩn hóa Ngày Hưởng (Cũ) kèm thuật toán lùi 1 năm
               if (res.ngayhuong) {
-                  let cd = res.ngayhuong.replace(/[^0-9]/g, '');
-                  if (cd.length >= 8) {
-                      setVal('ngayhh', cd.substring(0, 2) + '/' + cd.substring(2, 4) + '/' + cd.substring(4,8));
+                  let cdHuong = res.ngayhuong.replace(/[^0-9]/g, '');
+                  if (cdHuong.length >= 8) {
+                      setVal('ngayhh', cdHuong.substring(0, 2) + '/' + cdHuong.substring(2, 4) + '/' + cdHuong.substring(4,8));
                   } else {
                       setVal('ngayhh', res.ngayhuong);
                   }
+              } else if (loai === 'THAMNIEN' && finalNgayNang && finalNgayNang.length === 10) {
+                  // Kích hoạt thuật toán lùi 1 năm nếu là Thâm niên và không có ngày cũ
+                  let parts = finalNgayNang.split('/');
+                  if (parts.length === 3) {
+                      let y = parseInt(parts[2], 10);
+                      if (!isNaN(y)) {
+                          setVal('ngayhh', parts[0] + '/' + parts[1] + '/' + (y - 1));
+                      }
+                  }
               }
-              showNotify("🤖 AI trích xuất thông tin thành công!", "success");
               
+              showNotify("🤖 AI trích xuất thông tin thành công!", "success");
               renderDynamicLinks(rowCell);
           } else {
               showNotify("🤖 AI phản hồi: " + res.tbao, "error");
