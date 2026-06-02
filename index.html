@@ -418,6 +418,7 @@
           return; 
       }
 
+      // 1. Lọc theo tháng/năm (nếu có)
       if (rawThang !== "" || rawNam !== "") {
           const searchM = rawThang !== "" ? parseInt(rawThang, 10) : null;
           const searchY = rawNam !== "" ? parseInt(rawNam, 10) : null;
@@ -450,6 +451,25 @@
           return; 
       }
 
+      // 2. Thuật toán sắp xếp theo trình tự thời gian (Ngày hưởng)
+      rows.sort((a, b) => {
+          let d1, m1, y1, d2, m2, y2;
+          // Xác định vị trí cột ngày/tháng/năm hưởng tùy theo mảng Lương hay Thâm niên
+          if (loai === 'LUONG') {
+              d1 = parseInt(a[5], 10) || 0; m1 = parseInt(a[6], 10) || 0; y1 = parseInt(a[7], 10) || 0;
+              d2 = parseInt(b[5], 10) || 0; m2 = parseInt(b[6], 10) || 0; y2 = parseInt(b[7], 10) || 0;
+          } else {
+              d1 = parseInt(a[3], 10) || 0; m1 = parseInt(a[4], 10) || 0; y1 = parseInt(a[5], 10) || 0;
+              d2 = parseInt(b[3], 10) || 0; m2 = parseInt(b[4], 10) || 0; y2 = parseInt(b[5], 10) || 0;
+          }
+          
+          // Trình tự ưu tiên: Năm -> Tháng -> Ngày (Mới nhất đưa lên đầu)
+          if (y1 !== y2) return y2 - y1; 
+          if (m1 !== m2) return m2 - m1;
+          return d2 - d1;
+      });
+
+      // 3. Hiển thị dữ liệu
       let h = '';
       rows.forEach((r, i) => {
         const qdObj = loai === 'LUONG' ? r[14] : r[11]; 
