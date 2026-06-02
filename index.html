@@ -359,6 +359,23 @@
     thead.innerHTML = hHtml; tbody.innerHTML = ''; addRow();
   }
 
+  // KHỐI HÀM ĐỒNG BỘ HIỂN THỊ NÚT FILE
+  function setRowFileUI(rowCell, isLoaded) {
+      const upBtn = rowCell.querySelector('.mini-up-btn');
+      const delBtn = rowCell.querySelector('.mini-del-btn');
+      const aiBtn = rowCell.querySelector('.mini-ai-btn');
+      
+      if (isLoaded) {
+          if(upBtn) { upBtn.innerText = "✅ Đã tải"; upBtn.style.color = "green"; }
+          if(delBtn) delBtn.style.display = "inline-block";
+          if(aiBtn) aiBtn.style.display = "inline-block";
+      } else {
+          if(upBtn) { upBtn.innerText = "📁 Đính kèm"; upBtn.style.color = "#0284c7"; }
+          if(delBtn) delBtn.style.display = "none";
+          if(aiBtn) { aiBtn.style.display = "none"; aiBtn.innerText = "🤖 Quét AI"; aiBtn.style.background = "#fef08a"; aiBtn.style.color = "#854d0e"; }
+      }
+  }
+
   function addRow() {
     const type = document.getElementById('u_comboLoai').value; const cols = CONFIG[type]; const tbody = document.getElementById('u_tbody');
     const tr = document.createElement('tr'); tr.className = 'data-row'; let html = '<td class="stt-cell"></td>';
@@ -367,7 +384,7 @@
       else if (c.type === 'qd') {
         html += `<td>
             <div style="display:flex; flex-direction:column; gap:4px; align-items:center; justify-content:center;">
-                <div style="display:flex; gap:4px; align-items:center;">
+                <div style="display:flex; gap:4px; align-items:center; justify-content:center; flex-wrap:wrap;">
                     <span class="mini-btn mini-up-btn" onclick="triggerUpload(this)" title="Đính kèm Quyết định" style="padding: 4px 10px;">📁 Đính kèm</span>
                     <span class="mini-btn mini-ai-btn" onclick="triggerAIScan(this)" title="AI trích xuất tự động" style="padding: 4px 10px;">🤖 Quét AI</span>
                     <span class="mini-btn mini-del-btn" onclick="deleteFileInRow(this)" title="Xóa file" style="padding: 4px 10px;">❌ Xóa</span>
@@ -548,13 +565,10 @@
               if(k==='soqdLink') inp.value = (r[11] && r[11].link) ? String(r[11].link).trim() : ""; 
               if(k==='soqdText') inp.value = (r[11] && r[11].text) ? String(r[11].text).trim() : "";
           }
-          if (k==='soqdLink' && inp.value) {
+          if (k==='soqdLink' && inp.value.trim() !== "") {
                const cell = inp.closest('td');
                if(cell) {
-                   const btnUp = cell.querySelector('.mini-up-btn'); const btnDel = cell.querySelector('.mini-del-btn'); const aiBtn = cell.querySelector('.mini-ai-btn');
-                   if(btnUp) { btnUp.innerText = "✅ Đã tải"; btnUp.style.color = "green"; }
-                   if(btnDel) btnDel.style.display = "inline-block";
-                   if(aiBtn) aiBtn.style.display = "inline-block";
+                   setRowFileUI(cell, true);
                    renderDynamicLinks(cell); 
                }
           }
@@ -634,8 +648,6 @@
     const rowCell = btn.closest('td'); 
     const linkInput = rowCell.querySelector('input[data-key="soqdLink"]');
     const textInput = rowCell.querySelector('input[data-key="soqd"]'); 
-    const delBtn = rowCell.querySelector('.mini-del-btn'); 
-    const aiBtn = rowCell.querySelector('.mini-ai-btn'); 
     const oldUrl = linkInput ? linkInput.value : "";
     
     if(typeof openUploadModal === 'function') {
@@ -647,9 +659,7 @@
                 linkInput.value = fileUrl;
                 textInput.value = fileName;
             }
-            btn.innerText = "✅ Đã tải"; btn.style.color = "green"; 
-            if (delBtn) delBtn.style.display = "inline-block";
-            if (aiBtn) aiBtn.style.display = "inline-block";
+            setRowFileUI(rowCell, true);
             renderDynamicLinks(rowCell); 
         });
     } else { alert("Chưa kết nối được với file Upload Minh Chứng!"); }
@@ -731,17 +741,12 @@
   function resetRowFileUI(rowCell) {
       const linkInput = rowCell.querySelector('input[data-key="soqdLink"]'); 
       const textInput = rowCell.querySelector('input[data-key="soqd"]');
-      const upBtn = rowCell.querySelector('.mini-up-btn');
-      const delBtn = rowCell.querySelector('.mini-del-btn');
-      const aiBtn = rowCell.querySelector('.mini-ai-btn');
       const container = rowCell.querySelector('.dynamic-links');
       
       if(linkInput) linkInput.value = ""; 
       if(textInput) textInput.value = "";
-      if(upBtn) { upBtn.innerText = "📁 Đính kèm"; upBtn.style.color = "#0284c7"; }
-      if(delBtn) { delBtn.style.display = "none"; delBtn.innerText = "❌"; }
-      if(aiBtn) aiBtn.style.display = "none";
       if(container) container.innerHTML = '';
+      setRowFileUI(rowCell, false);
   }
 
   function startAppMain() {
