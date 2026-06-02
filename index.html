@@ -53,6 +53,7 @@
     .cell-input.text-left { text-align: left; }
     .mini-btn { cursor: pointer; padding: 4px 8px; border-radius: 4px; font-size: 13px; border: 1px solid #bae6fd; display: inline-block; margin-left: 2px; }
     .mini-up-btn { background: #e0f2fe; color: #0284c7; } .mini-up-btn:hover { background: #bae6fd; }
+    .mini-ai-btn { background: #fef08a; color: #854d0e; border-color: #fde047; display: none; } .mini-ai-btn:hover { background: #fde047; }
     .mini-del-btn { background: #fee2e2; color: #dc2626; border-color: #fecaca; display: none; } .mini-del-btn:hover { background: #fecaca; }
     .view-link { display: none; margin-left: 5px; text-decoration: none; cursor: pointer; font-size: 16px; color: #1e3a8a; }
     .hidden { display: none !important; }
@@ -221,7 +222,8 @@
     CD_LayQuyenNguoiDung: function() { this._goiMayChu('CD_LayQuyenNguoiDung', []); },
     CD_KiemTraQuyenDrive: function() { this._goiMayChu('CD_KiemTraQuyenDrive', []); },
     CD_GanLink: function(link, id, oldUrl, mode) { this._goiMayChu('CD_GanLink', [link, id, oldUrl, mode]); },
-    CD_XoaTepTheoLink: function(url) { this._goiMayChu('CD_XoaTepTheoLink', [url]); }
+    CD_XoaTepTheoLink: function(url) { this._goiMayChu('CD_XoaTepTheoLink', [url]); },
+    CD_DocQuyetDinhAI: function(link) { this._goiMayChu('CD_DocQuyetDinhAI', [link]); }
   });
 
   document.addEventListener("DOMContentLoaded", function() {
@@ -277,9 +279,7 @@
       }
   }
 
-  function checkTrialPeriod() {
-    return true; 
-  }
+  function checkTrialPeriod() { return true; }
   
   function handleCredentialResponse(response) {
       let textData = "";
@@ -369,6 +369,7 @@
             <div style="display:flex; flex-direction:column; gap:4px; align-items:center; justify-content:center;">
                 <div style="display:flex; gap:4px; align-items:center;">
                     <span class="mini-btn mini-up-btn" onclick="triggerUpload(this)" title="Đính kèm Quyết định" style="padding: 4px 10px;">📁 Đính kèm</span>
+                    <span class="mini-btn mini-ai-btn" onclick="triggerAIScan(this)" title="AI trích xuất tự động" style="padding: 4px 10px;">🤖 Quét AI</span>
                     <span class="mini-btn mini-del-btn" onclick="deleteFileInRow(this)" title="Xóa file" style="padding: 4px 10px;">❌ Xóa</span>
                     <input type="hidden" data-key="${c.id}">
                     <input type="hidden" data-key="${c.id}Link">
@@ -418,7 +419,6 @@
           return; 
       }
 
-      // 1. Lọc theo tháng/năm (nếu có)
       if (rawThang !== "" || rawNam !== "") {
           const searchM = rawThang !== "" ? parseInt(rawThang, 10) : null;
           const searchY = rawNam !== "" ? parseInt(rawNam, 10) : null;
@@ -434,14 +434,8 @@
               }
               
               let match = true;
-              
-              if (searchM !== null) {
-                  if (isNaN(m2) || m2 !== searchM) match = false;
-              }
-              if (searchY !== null) {
-                  if (isNaN(y2) || y2 !== searchY) match = false;
-              }
-              
+              if (searchM !== null) { if (isNaN(m2) || m2 !== searchM) match = false; }
+              if (searchY !== null) { if (isNaN(y2) || y2 !== searchY) match = false; }
               return match;
           });
       }
@@ -451,10 +445,8 @@
           return; 
       }
 
-      // 2. Thuật toán sắp xếp theo trình tự thời gian (Ngày hưởng)
       rows.sort((a, b) => {
           let d1, m1, y1, d2, m2, y2;
-          // Xác định vị trí cột ngày/tháng/năm hưởng tùy theo mảng Lương hay Thâm niên
           if (loai === 'LUONG') {
               d1 = parseInt(a[5], 10) || 0; m1 = parseInt(a[6], 10) || 0; y1 = parseInt(a[7], 10) || 0;
               d2 = parseInt(b[5], 10) || 0; m2 = parseInt(b[6], 10) || 0; y2 = parseInt(b[7], 10) || 0;
@@ -462,14 +454,11 @@
               d1 = parseInt(a[3], 10) || 0; m1 = parseInt(a[4], 10) || 0; y1 = parseInt(a[5], 10) || 0;
               d2 = parseInt(b[3], 10) || 0; m2 = parseInt(b[4], 10) || 0; y2 = parseInt(b[5], 10) || 0;
           }
-          
-          // Trình tự ưu tiên: Năm -> Tháng -> Ngày (Mới nhất đưa lên đầu)
           if (y1 !== y2) return y2 - y1; 
           if (m1 !== m2) return m2 - m1;
           return d2 - d1;
       });
 
-      // 3. Hiển thị dữ liệu
       let h = '';
       rows.forEach((r, i) => {
         const qdObj = loai === 'LUONG' ? r[14] : r[11]; 
@@ -485,18 +474,14 @@
                     links.map((l, idx) => `<a href="${l.trim()}" target="_blank" style="text-decoration:none; background:#e0f2fe; border:1px solid #bae6fd; padding:2px 5px; border-radius:3px; font-size:12px; font-weight:bold; color:#0369a1;" title="Xem QĐ ${idx+1}">QĐ${idx+1}</a>`).join('') + `</div>`;
             } else if (linkStr) {
                 linkDisplay = `<a href="${linkStr}" target="_blank" style="text-decoration:none; background:#e0f2fe; border:1px solid #bae6fd; padding:2px 5px; border-radius:3px; font-size:12px; font-weight:bold; color:#0369a1;" title="${qdText}">QĐ 1</a>`;
-            } else { 
-                linkDisplay = qdText; 
-            }
+            } else { linkDisplay = qdText; }
         } else { 
             let str = String(qdObj || "").trim(); 
             if(str.includes('http')) {
                  let links = str.split(',').filter(l => l.includes('http'));
                  linkDisplay = `<div style="display:flex; flex-wrap:wrap; gap:3px; justify-content:center;">` + 
                     links.map((l, idx) => `<a href="${l.trim()}" target="_blank" style="text-decoration:none; background:#e0f2fe; border:1px solid #bae6fd; padding:2px 5px; border-radius:3px; font-size:12px; font-weight:bold; color:#0369a1;" title="Xem QĐ ${idx+1}">QĐ${idx+1}</a>`).join('') + `</div>`;
-            } else { 
-                linkDisplay = str; 
-            }
+            } else { linkDisplay = str; }
         }
 
         let htmlSua = "";
@@ -517,8 +502,7 @@
       tbody.innerHTML = h;
     }).withFailureHandler(loi => { 
         tbody.innerHTML=`<tr><td colspan="15" class="text-error">Lỗi: ${loi.message}</td></tr>`; 
-    })
-    [loai === 'LUONG' ? 'CD_TraCuuLuong' : 'CD_TraCuuThamNien'](boLoc); 
+    })[loai === 'LUONG' ? 'CD_TraCuuLuong' : 'CD_TraCuuThamNien'](boLoc); 
   }
 
   function transferToEdit(dataEncoded, loai) {
@@ -567,9 +551,10 @@
           if (k==='soqdLink' && inp.value) {
                const cell = inp.closest('td');
                if(cell) {
-                   const btnUp = cell.querySelector('.mini-up-btn'); const btnDel = cell.querySelector('.mini-del-btn');
+                   const btnUp = cell.querySelector('.mini-up-btn'); const btnDel = cell.querySelector('.mini-del-btn'); const aiBtn = cell.querySelector('.mini-ai-btn');
                    if(btnUp) { btnUp.innerText = "✅ Đã tải"; btnUp.style.color = "green"; }
                    if(btnDel) btnDel.style.display = "inline-block";
+                   if(aiBtn) aiBtn.style.display = "inline-block";
                    renderDynamicLinks(cell); 
                }
           }
@@ -588,11 +573,7 @@
             const k = inp.getAttribute('data-key');
             if (k) { 
                 rowData[k] = inp.value.trim(); 
-                
-                if (editRowIndex && rowData[k] === "") {
-                    rowData[k] = " ";
-                }
-                
+                if (editRowIndex && rowData[k] === "") rowData[k] = " ";
                 if (rowData[k].trim() !== "" && k !== 'soqdLink' && k !== 'soqdText') hasData = true; 
                 if (k === 'hoten') hotenInput = inp; 
             }
@@ -654,6 +635,7 @@
     const linkInput = rowCell.querySelector('input[data-key="soqdLink"]');
     const textInput = rowCell.querySelector('input[data-key="soqd"]'); 
     const delBtn = rowCell.querySelector('.mini-del-btn'); 
+    const aiBtn = rowCell.querySelector('.mini-ai-btn'); 
     const oldUrl = linkInput ? linkInput.value : "";
     
     if(typeof openUploadModal === 'function') {
@@ -667,9 +649,69 @@
             }
             btn.innerText = "✅ Đã tải"; btn.style.color = "green"; 
             if (delBtn) delBtn.style.display = "inline-block";
+            if (aiBtn) aiBtn.style.display = "inline-block";
             renderDynamicLinks(rowCell); 
         });
     } else { alert("Chưa kết nối được với file Upload Minh Chứng!"); }
+  }
+  
+  function triggerAIScan(btn) {
+      const rowCell = btn.closest('td');
+      const rowTr = btn.closest('tr');
+      const linkInput = rowCell.querySelector('input[data-key="soqdLink"]');
+      const url = linkInput ? linkInput.value : "";
+      
+      if (!url) { showNotify("Chưa có file đính kèm Quyết định để AI quét!", "warning"); return; }
+      
+      const originalText = btn.innerText;
+      btn.innerText = "⏳ Đang quét...";
+      btn.style.pointerEvents = "none";
+      btn.style.opacity = "0.7";
+      
+      window.google.script.run.withSuccessHandler(res => {
+          btn.innerText = "✅ Trích xuất xong";
+          btn.style.background = "#4ade80";
+          btn.style.color = "#064e3b";
+          btn.style.borderColor = "#22c55e";
+          
+          if(res.tcon) {
+              const setVal = (key, val) => {
+                  const inp = rowTr.querySelector(`input[data-key="${key}"]`);
+                  if (inp && val && val.trim() !== "") inp.value = val.trim();
+              };
+              
+              setVal('hoten', res.hoten);
+              setVal('mangach', res.mangach);
+              setVal('bachh', res.bac); 
+              setVal('hshh', res.heso); 
+              
+              if (res.ngayhuong) {
+                  let cd = res.ngayhuong.replace(/[^0-9]/g, '');
+                  if (cd.length >= 8) {
+                      setVal('ngayhh', cd.substring(0, 2) + '/' + cd.substring(2, 4) + '/' + cd.substring(4,8));
+                  } else {
+                      setVal('ngayhh', res.ngayhuong);
+                  }
+              }
+              showNotify("🤖 AI trích xuất thông tin thành công!", "success");
+          } else {
+              showNotify("🤖 AI phản hồi: " + res.tbao, "error");
+          }
+          
+          setTimeout(() => { 
+             btn.innerText = originalText;
+             btn.style.pointerEvents = "auto";
+             btn.style.opacity = "1";
+             btn.style.background = "#fef08a";
+             btn.style.color = "#854d0e";
+             btn.style.borderColor = "#fde047";
+          }, 3000);
+      }).withFailureHandler(err => {
+          btn.innerText = originalText;
+          btn.style.pointerEvents = "auto";
+          btn.style.opacity = "1";
+          showNotify("❌ Lỗi kết nối AI: " + err.message, "error");
+      }).CD_DocQuyetDinhAI(url);
   }
 
   function deleteFileInRow(btn) {
@@ -691,12 +733,14 @@
       const textInput = rowCell.querySelector('input[data-key="soqd"]');
       const upBtn = rowCell.querySelector('.mini-up-btn');
       const delBtn = rowCell.querySelector('.mini-del-btn');
+      const aiBtn = rowCell.querySelector('.mini-ai-btn');
       const container = rowCell.querySelector('.dynamic-links');
       
       if(linkInput) linkInput.value = ""; 
       if(textInput) textInput.value = "";
       if(upBtn) { upBtn.innerText = "📁 Đính kèm"; upBtn.style.color = "#0284c7"; }
       if(delBtn) { delBtn.style.display = "none"; delBtn.innerText = "❌"; }
+      if(aiBtn) aiBtn.style.display = "none";
       if(container) container.innerHTML = '';
   }
 
