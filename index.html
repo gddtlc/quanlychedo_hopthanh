@@ -335,6 +335,22 @@
     if (v.length >= 5) input.value = v.substring(0, 2) + '/' + v.substring(2, 4) + '/' + v.substring(4);
     else if (v.length >= 3) input.value = v.substring(0, 2) + '/' + v.substring(2);
     else input.value = v;
+
+    // THUẬT TOÁN TỰ ĐỘNG CỘNG 3 NĂM CHO LƯƠNG 
+    if (input.value.length === 10 && input.getAttribute('data-key') === 'ngayhh') {
+        const loai = document.getElementById('u_comboLoai')?.value;
+        if (loai === 'LUONG') {
+            const row = input.closest('tr');
+            const inpNgayN = row?.querySelector('input[data-key="ngayn"]');
+            if (inpNgayN) { 
+                let parts = input.value.split('/');
+                let y = parseInt(parts[2], 10);
+                if (!isNaN(y)) {
+                    inpNgayN.value = parts[0] + '/' + parts[1] + '/' + (y + 3);
+                }
+            }
+        }
+    }
   }
   
   function switchTab(t) {
@@ -556,9 +572,12 @@
               if(k==='ngayct') inp.value = r[15] ? formatvnDate(r[15]) : "";
           } else {
               if(k==='hoten') inp.value = String(r[1] || "").trim(); 
-              if(k==='tlhh') inp.value = String(r[2] || "").trim(); 
+              
+              // SỬA LỖI ĐỊNH DẠNG % KHI CHUYỂN SANG TAB SỬA
+              if(k==='tlhh') inp.value = formatPercent(r[2]); 
+              if(k==='tln') inp.value = formatPercent(r[7]); 
+              
               if(k==='ngayhh') inp.value = formatD(r[3],r[4],r[5]);
-              if(k==='tln') inp.value = String(r[7] || "").trim(); 
               if(k==='ngayn') inp.value = formatD(r[8],r[9],r[10]);
               if(k==='soqd') inp.value = (r[11] && r[11].text) ? String(r[11].text).trim() : ""; 
               if(k==='soqdLink') inp.value = (r[11] && r[11].link) ? String(r[11].link).trim() : ""; 
@@ -703,7 +722,6 @@
               setVal('tlhh', res.tlhh); 
               setVal('tln', res.tln); 
               
-              // Xử lý chuẩn hóa Ngày Nâng (Mới)
               let finalNgayNang = "";
               if (res.ngaynang) {
                   let cdNang = res.ngaynang.replace(/[^0-9]/g, '');
@@ -715,7 +733,6 @@
                   setVal('ngayn', finalNgayNang);
               }
               
-              // Xử lý chuẩn hóa Ngày Hưởng (Cũ) kèm thuật toán lùi 1 năm
               if (res.ngayhuong) {
                   let cdHuong = res.ngayhuong.replace(/[^0-9]/g, '');
                   if (cdHuong.length >= 8) {
@@ -724,12 +741,25 @@
                       setVal('ngayhh', res.ngayhuong);
                   }
               } else if (loai === 'THAMNIEN' && finalNgayNang && finalNgayNang.length === 10) {
-                  // Kích hoạt thuật toán lùi 1 năm nếu là Thâm niên và không có ngày cũ
                   let parts = finalNgayNang.split('/');
                   if (parts.length === 3) {
                       let y = parseInt(parts[2], 10);
                       if (!isNaN(y)) {
                           setVal('ngayhh', parts[0] + '/' + parts[1] + '/' + (y - 1));
+                      }
+                  }
+              }
+              
+              // KÍCH HOẠT THUẬT TOÁN: CỘNG 3 NĂM CHO LƯƠNG TRÊN AI
+              if (loai === 'LUONG') {
+                  let valNgayHh = rowTr.querySelector(`input[data-key="ngayhh"]`)?.value;
+                  if (valNgayHh && valNgayHh.length === 10) {
+                      let parts = valNgayHh.split('/');
+                      if (parts.length === 3) {
+                          let y = parseInt(parts[2], 10);
+                          if (!isNaN(y)) {
+                              setVal('ngayn', parts[0] + '/' + parts[1] + '/' + (y + 3));
+                          }
                       }
                   }
               }
